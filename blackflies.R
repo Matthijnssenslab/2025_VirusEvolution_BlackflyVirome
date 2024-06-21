@@ -713,6 +713,8 @@ rarefaction_plot <- curve_df %>%
         legend.title = element_blank(),
         axis.ticks = )
 
+rarefaction_plot
+
 fig1 <- ((realm_plot | realm_read_plot) + plot_layout(guides = "collect")) /
   ((ribophylum_plot | ribophylum_read_plot) + plot_layout(guides = "collect")) /
   rarefaction_plot
