@@ -1,6 +1,8 @@
 library(tidyverse)
 library(patchwork)
+library(ggnewscale)
 library(readxl)
+library(ggtext)
 
 vmr <- read_excel("data/VMR_MSL38_v2.xlsx")
 
@@ -349,4 +351,5 @@ p3 <- as_ggplot(leg2)
 
 # Plot combined + custom legend
 p2/p3+plot_layout(heights = c(1,.1))+plot_annotation(tag_levels = list(c("A", "B", "")))
-ggsave("figures/tiff/figure6.tiff", dpi=300, width=7, height = 4.5)
+ggsave("figures/pdf/figure5.pdf", dpi=300, width=7, height = 4.5)
+ggsave("figures/tiff/figure5.tiff", dpi=300, width=7, height = 4.5)
