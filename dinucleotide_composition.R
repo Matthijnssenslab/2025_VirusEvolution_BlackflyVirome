@@ -11,6 +11,7 @@ rhabdo <- vmr %>%
   filter(Family == "Rhabdoviridae") 
 
 rhabdo %>% 
+  #filter(`Genome coverage` != "Partial genome") %>% 
   pull(`Virus REFSEQ accession`) %>% 
   na.omit() %>% 
   str_remove(".*: ") %>% 

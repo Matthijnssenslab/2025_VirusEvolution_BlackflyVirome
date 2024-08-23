@@ -71,7 +71,7 @@ tree <- left_join(input_tree, rcr90_tree, by=c("label" = "tip"))
 tree_data <- as_tibble(tree)
 
 # Set color vector
-cols<- c("TRUE"="red", "FALSE"="black")
+cols <- c("TRUE"="red", "FALSE"="black")
 
 
 base_tree <- ggtree(tree, layout = "circular", branch.length ="none", size=.1)
