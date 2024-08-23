@@ -542,21 +542,21 @@ fig1 <- ((realm_plot | realm_read_plot) + plot_layout(guides = "collect")) /
   ((ribophylum_plot | ribophylum_read_plot) + plot_layout(guides = "collect")) /
   rarefaction_plot
 
-fig1 & patchwork::plot_annotation(tag_levels = "A")&
-  theme(plot.tag = element_text(face = 'bold'))
+fig1 & patchwork::plot_annotation(tag_levels = "A")
 
-ggsave("figures/figure1.pdf", dpi=300, height = 8.2, width=7)
+#ggsave("figures/figure1.pdf", dpi=300, height = 8.2, width=7)
 
 fig2 <- ((realm_p + riboviria_p)+ plot_layout(guides = "collect"))/
   rarefaction_plot+
   plot_layout(heights = c(1, .5))
 
 fig2 & 
-  plot_annotation(tag_levels = "A") &
-  theme(plot.tag = element_text(face = 'bold'))
+  plot_annotation(tag_levels = "A")
+
+ggsave("figures/figure1.pdf", dpi=300, height = 7.5, width=7)
 
 #ggsave("figures/figure_2_bis.pdf", dpi=300, height = 7.5, width=7)
-ggsave("figures/tiff/figure3.tiff", dpi=300, height = 7.5, width=7)
+#ggsave("figures/tiff/figure3.tiff", dpi=300, height = 7.5, width=7)
 
 ## Venn diagram
 genomad <- filtered_tax3[!is.na(filtered_tax3$Virus.genomad),]$rowname
