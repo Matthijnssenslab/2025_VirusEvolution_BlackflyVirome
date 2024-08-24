@@ -315,16 +315,11 @@ tree <- tree |>
 clade <- get_mrca(tree=tree, meta=combined_tree, group="Family.ICTV")
 
 # Split Partiti clades
-
-ggtree(tree)+
-  geom_text(aes(label=node))
-
-# Partiti clade 1 = node 237
-# Partiti clade 2 = node 330
+get_mrca(tree=tree, meta=combined_tree, group="Genus.ICTV")
 
 clade <- clade |> 
   filter(id != "Partitiviridae") |> 
-  bind_rows(data.frame(node=c(237, 330), id=c("Partitiviridae;\n clade 1", "Partitiviridae;\n clade 2")))
+  bind_rows(data.frame(node=c(235, 354, 332, 380), id=c("Gammapartitivirus", "Alphapartitivirus", "Betapartitivirus", "Deltapartitivirus")))
 
 durna_tree <- tree
 detailed_tree(durna_tree, clade, "Durnavirales")
@@ -332,7 +327,8 @@ detailed_tree(durna_tree, clade, "Durnavirales")
 ggsave("figures/ictv_trees/durna.pdf", dpi=300, width=180, height = 215, units = "mm")
 
 durna_clade <- clade |> 
-  filter(id %in% c("Partitiviridae;\n clade 1", "Partitiviridae;\n clade 2", "Curvulaviridae", "Hypoviridae"))
+  filter(id %in% c("Gammapartitivirus", "Alphapartitivirus", "Betapartitivirus", "Deltapartitivirus", 
+                  "Curvulaviridae", "Hypoviridae", "Picobirnaviridae"))
 
 durna <- naked_tree(durna_tree, durna_clade, "Durnavirales")
 
@@ -588,8 +584,8 @@ genomo <- naked_tree(genomo_tree, genomo_clade, "Genomoviridae")
 
 # All trees
 # dsRNA + ssDNA
-((ghabri | durna)/(parvo | genomo))+
-  plot_layout(heights = c(1, .5),
+((parvo | genomo)/(ghabri | durna))+
+  plot_layout(heights = c(.5, 1),
               tag_level ="keep")&
     plot_annotation(tag_levels = "A")
 ggsave("figures/ictv_trees/dsRNA_ssDNA.pdf", dpi=300, height = 215, width = 180, units = "mm")
