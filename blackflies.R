@@ -394,6 +394,47 @@ realm_p + riboviria_p +
   plot_annotation(tag_level="A") &
   theme(plot.tag = element_text(face="bold"))
 
+v_reads <- abundance_df |> 
+  filter(class == "All viruses" & level == "Reads") |> 
+  select(n) |> 
+  sum()
+
+r_reads <- reads |> 
+  select(num_seqs_raw) |> 
+  sum()
+
+t_reads <- reads |> 
+  select(num_seqs_trimmed) |> 
+  sum()
+
+t_reads - v_reads
+
+df <- data.frame(levels=c("raw", "trimmed", "viral"),
+          reads=c(r_reads, t_reads, v_reads))
+
+read_plot <- df |> 
+  ggplot(aes(x=levels, y=reads))+
+  geom_col()+
+  theme_bw()+
+  theme(axis.title.x = element_blank())
+
+kraken <- read_tsv("data/kraken_high_level_report.tsv", col_names = c("perc", "read_nr", "read_nr_taxon", "rank", "taxid", "name", "sample"))
+
+kraken_plot <- kraken |> 
+  filter(!str_detect(sample, "NC")) |> 
+  group_by(name) |> 
+  summarise(total=sum(read_nr)*2) |> 
+  ggplot(aes(x="Kraken2", y=total, fill=name))+
+  geom_col()+
+  theme_bw()+
+  scale_fill_brewer(palette="Set1")+
+  theme(axis.title.x = element_blank())
+
+(read_plot | kraken_plot)+
+  plot_layout(widths = c(1, .33))+
+  plot_annotation(tag_level="A")
+ggsave("figures/reads_kraken.pdf", dpi=300, width=7, height=4)
+
 # Rarefaction curves
 
 virome_df <- left_join(taxonomy_df, 

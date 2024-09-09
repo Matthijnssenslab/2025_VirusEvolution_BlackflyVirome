@@ -2,7 +2,7 @@ library(tidyverse)
 library(ggtree)
 library(tidytree)
 library(patchwork)
-detach("package:phyloseq", unload = T)
+#detach("package:phyloseq", unload = T)
 
 # Function to get the MRCA node in a tree of specified taxonomy level
 # Best used with ICTV confirmed species
@@ -126,9 +126,9 @@ naked_tree <- function(tree, clade, title){
   geom_tiplab(aes(label="", color=Source, subset=Source == "Blackflies"), linesize = .5, align = T, show.legend=F, linetype=1)+
   scale_color_manual(values=c("ICTV"="darkgrey", "Blackflies"="red"), na.translate = F)+
   #scale_x_continuous(expand=expansion(mult=c(0, 0.2)))+
-  hexpand(0.2)+
   geom_cladelab(data=clade, mapping=aes(node=node, label=id), color="black",
-                fontface="italic", fontsize=2, barsize=.25, align=T, offset=.01, parse = T)+
+  fontface="italic", fontsize=2, barsize=.25, align=T, offset=.01, parse = T)+
+  hexpand(0.2)+
   geom_rootedge(.05)+
   coord_cartesian(clip = 'off')+
   ggtitle(title)+
@@ -139,14 +139,14 @@ naked_tree <- function(tree, clade, title){
   x_max <- layer_scales(p)$x$range$range[2]
   y_set <- y_max - (y_max*0.05)
   
-  if (x_max > 1){
+  if (x_max > 1.5){
     w <- 0.5
   } else {
     w <- 0.1
   }
   
   p+
-    geom_treescale(x=0, y=y_set, width=w, offset=y_max*0.01, fontsize=3)
+    geom_treescale(x=0, y=y_set, width=w, offset=1, fontsize=2)
 }
 
 detailed_tree <- function(tree, clade, title){
@@ -178,7 +178,7 @@ detailed_tree <- function(tree, clade, title){
   addSmallLegend(p2, pointSize = 3, textSize = 6)+
     coord_cartesian(clip = 'off')+
     ggtitle(title)+
-    geom_treescale(x=0, y=y_set, width=w, offset=y_max*0.01, fontsize=3)+
+    geom_treescale(x=0, y=y_set, width=w, offset=y_max*0.01, fontsize=2)+
     theme(plot.title = element_text(face="italic", size = 8),
           legend.position = "bottom")
 }
@@ -291,7 +291,7 @@ detailed_tree(martelli_tree, clade, "Martellivirales")
 ggsave("figures/ictv_trees/martelli.pdf", dpi=300, width=180, height = 215, units = "mm")
 
 martelli_clade <- clade |> 
-  filter(id %in% c("Togaviridae", "Closteroviridae"))
+  filter(id %in% c("Togaviridae", "Closteroviridae", "Mayoviridae", "Virgaviridae", "Bromoviridae", "Kitaviridae", "Endornaviridae"))
 
 martelli <- naked_tree(martelli_tree, martelli_clade, "Martellivirales")+
   geom_tippoint(aes(label="", color=Source, subset=label == "NODE_A21_length_7442_cov_187.677936_BlackFly31_2"), show.legend=F)
@@ -611,19 +611,9 @@ ggsave("figures/ictv_trees/ssRNA(+).pdf", dpi=300, height=215, width=180, units 
 ggsave("figures/ictv_trees/ssRNA(-).pdf", dpi=300, height=215, width=180, units = "mm")
 
 # All
-p1 <- (parvo | genomo)/(ghabri | durna)+plot_layout(heights = c(.5, 1))
-
-p2 <- (picorna | (martelli/flavi/tymo))+plot_layout(heights = c(1, .5, .5))
-
-p3 <- (rhabdo | (phenui  / orthomyxo / mymona))+plot_layout(heights = c(1, 1, .5))
-
-(p1/p2/p3)+
-  plot_layout(ncol=1, nrow=4, heights = c(.25, .5, 1, 1))&
-    plot_annotation(tag_levels = "A", 
-    theme = theme(plot.margin = margin(0),
-                  panel.border = element_blank(),
-                  panel.background = element_blank()))
+(ghabri / durna) | (picorna / tymo)+plot_layout(heights = c(1, .1)) | (martelli / rhabdo) | (flavi / phenui / orthomyxo / mymona)+plot_layout(heights = c(1, 1, 1, .7))
 ggsave("figures/ictv_trees/all.pdf", dpi=300, height=215, width=180, units = "mm")
+
 
 # Get accessions
 vmr |> 

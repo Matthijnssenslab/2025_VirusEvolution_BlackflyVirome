@@ -78,7 +78,7 @@ draw_blackfly_heatmap <- function(grouped_order_df, log2 = T, title = "Log2 Read
     )
 
   phages <- hm_anno_df %>%
-    filter(Realm == "Duplodnaviria" | Class == "Leviviricetes" | Family %in% c("Picobirnaviridae", "Cystoviridae")) %>%
+    filter(Realm == "Duplodnaviria" | Class == "Leviviricetes" | Family %in% c("Picobirnaviridae", "Cystoviridae") | Phylum == "Hofneiviricota") %>%
     pull(Family_all)
 
   hm_anno_df <- hm_anno_df %>%
