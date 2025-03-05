@@ -96,3 +96,6 @@ Temporary Items
 
 # End of https://www.toptal.com/developers/gitignore/api/macos
 
+data/viral_genomes/genbank_submission
+data/abundance_table
+data/fungi_abundance.txt
