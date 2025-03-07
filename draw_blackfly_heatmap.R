@@ -1,5 +1,5 @@
 library(ComplexHeatmap)
-draw_blackfly_heatmap <- function(grouped_order_df, log2 = T, title = "Log2 Read counts", legend_side="left") {
+draw_blackfly_heatmap <- function(grouped_order_df, log2 = T, title = "Log2 Read counts", legend_side = "left") {
   hm_df <- grouped_order_df %>%
     mutate(rowname = paste(Realm, Kingdom, Phylum, Class, Order, Family, n, sep = "_")) %>%
     select(-Realm, -Kingdom, -Phylum, -Class, -Order, -Family, -n) %>%
@@ -92,15 +92,15 @@ draw_blackfly_heatmap <- function(grouped_order_df, log2 = T, title = "Log2 Read
 
   left_ra <- ComplexHeatmap::rowAnnotation(
     "Kingdom" = anno_simple(hm_anno_df$Kingdom, col = king_col),
-    "Phylum" = anno_simple(hm_anno_df$Phylum, col = phyla_col),
-    "Class" = anno_simple(hm_anno_df$Class,
-      col = class_col, pch = hm_anno_df$ClassNumber,
-      pt_size = unit(2, "mm"), pt_gp = gpar(col = "black")
-    ),
-    "Order" = anno_simple(hm_anno_df$Order,
-      col = order_col, pch = hm_anno_df$OrderNumber,
-      pt_size = unit(2, "mm"), pt_gp = gpar(col = "black")
-    ),
+    # "Phylum" = anno_simple(hm_anno_df$Phylum, col = phyla_col),
+    # "Class" = anno_simple(hm_anno_df$Class,
+    #  col = class_col, pch = hm_anno_df$ClassNumber,
+    #  pt_size = unit(2, "mm"), pt_gp = gpar(col = "black")
+    # ),
+    # "Order" = anno_simple(hm_anno_df$Order,
+    #  col = order_col, pch = hm_anno_df$OrderNumber,
+    #  pt_size = unit(2, "mm"), pt_gp = gpar(col = "black")
+    # ),
     show_annotation_name = T,
     annotation_name_side = "top",
     annotation_name_gp = gpar(fontsize = 10, fontface = "bold"),
@@ -121,13 +121,11 @@ draw_blackfly_heatmap <- function(grouped_order_df, log2 = T, title = "Log2 Read
   )
 
   if (log2 == T) {
-    matrix <- log2(as.matrix(hm_df+1))
-  }
-  
-  else {
+    matrix <- log2(as.matrix(hm_df + 1))
+  } else {
     matrix <- as.matrix(hm_df)
   }
-  
+
   hm <- ComplexHeatmap::Heatmap(
     matrix,
     cluster_columns = T,
@@ -157,24 +155,31 @@ draw_blackfly_heatmap <- function(grouped_order_df, log2 = T, title = "Log2 Read
     labels = gt_render(ifelse(names(king_col) != "unclassified", glue::glue("<i>{names(king_col)}</i>"), "unclassified")),
     title = "Kingdom", legend_gp = gpar(fill = king_col)
   )
-  lgd_phylum <- ComplexHeatmap::Legend(
-    labels = gt_render(ifelse(names(phyla_col) != "unclassified", glue::glue("<i>{names(phyla_col)}</i>"), "unclassified")),
-    title = "Phylum", legend_gp = gpar(fill = phyla_col)
-  )
-  lgd_class <- ComplexHeatmap::Legend(
-    labels = gt_render(ifelse(names(class_col) != "unclassified", glue::glue("<i>{names(class_col)}</i>"), "unclassified")),
-    title = "Class", legend_gp = gpar(col = "black"), background = class_col, pch = class_pch, type = "points"
-  )
-  lgd_order <- ComplexHeatmap::Legend(gt_render(ifelse(names(order_col) != "unclassified", glue::glue("<i>{names(order_col)}</i>"), "unclassified")),
-    title = "Order", legend_gp = gpar(col = "black"), background = order_col, pch = order_pch, type = "points"
-  )
+  # lgd_phylum <- ComplexHeatmap::Legend(
+  #  labels = gt_render(ifelse(names(phyla_col) != "unclassified", glue::glue("<i>{names(phyla_col)}</i>"), "unclassified")),
+  #  title = "Phylum", legend_gp = gpar(fill = phyla_col)
+  # )
+  # lgd_class <- ComplexHeatmap::Legend(
+  #  labels = gt_render(ifelse(names(class_col) != "unclassified", glue::glue("<i>{names(class_col)}</i>"), "unclassified")),
+  #  title = "Class", legend_gp = gpar(col = "black"), background = class_col, pch = class_pch, type = "points"
+  # )
+  # lgd_order <- ComplexHeatmap::Legend(gt_render(ifelse(names(order_col) != "unclassified", glue::glue("<i>{names(order_col)}</i>"), "unclassified")),
+  #  title = "Order", legend_gp = gpar(col = "black"), background = order_col, pch = order_pch, type = "points"
+  # )
   lgd_type <- ComplexHeatmap::Legend(
     labels = gt_render(names(type_col)),
     title = "Virus type", legend_gp = gpar(fill = type_col)
   )
 
 
-  pd <- ComplexHeatmap::packLegend(lgd_type, lgd_king, lgd_phylum, lgd_class, lgd_order, max_height = unit(10, "cm"))
+  pd <- ComplexHeatmap::packLegend(
+    lgd_type,
+    lgd_king,
+    # lgd_phylum,
+    # lgd_class,
+    # lgd_order,
+    max_height = unit(10, "cm")
+  )
 
   ComplexHeatmap::draw(hm,
     annotation_legend_list = pd,

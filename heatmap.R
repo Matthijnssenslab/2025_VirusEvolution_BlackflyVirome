@@ -1,6 +1,6 @@
 source("blackflies.R")
 here::i_am("heatmap.R")
-
+load("blackflies.RData")
 # Prep
 clean_viruses <- taxonomy_df$rowname
 clean_OTU <- OTU %>%
@@ -53,8 +53,10 @@ ra_p <- joined_df %>%
     binwidth = 0.03,
     show.legend = F
   ) +
-  scale_y_log10(breaks = c(0, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1), 
-                labels = c(0, 0.0001, 0.001, 0.01, 0.1, 1, 10, 100)) +
+  scale_y_log10(
+    breaks = c(0, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1),
+    labels = c(0, 0.0001, 0.001, 0.01, 0.1, 1, 10, 100)
+  ) +
   labs(y = "Relative abundance (%)") +
   # ggpubr::stat_pwc(hide.ns = T)+
   scale_fill_manual(values = alpha(realm_col, .3)) +
@@ -99,8 +101,10 @@ tpm_p <- tpm_scaled %>%
     binwidth = 0.025,
     show.legend = F
   ) +
-  scale_y_log10(breaks = c(0, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1), 
-                labels = c(0, 0.001, 0.01, 0.1, 1, 10, 100)) +
+  scale_y_log10(
+    breaks = c(0, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1),
+    labels = c(0, 0.001, 0.01, 0.1, 1, 10, 100)
+  ) +
   labs(y = "Length normalized\nrelative abundance (%)") +
   # ggpubr::stat_pwc(hide.ns = T, method = "wilcox.test", p.adjust.method = "BH") +
   scale_fill_manual(values = alpha(realm_col, .3)) +
@@ -109,7 +113,7 @@ tpm_p <- tpm_scaled %>%
   coord_cartesian(xlim = c(1.2, 3.9), clip = "off")
 
 tpm_p / ra_p
-ggsave("figures/raincloud.pdf", dpi=300, height = 5, width = 10)
+ggsave("figures/raincloud.pdf", dpi = 300, height = 5, width = 10)
 
 tpm_p
 ggsave(plot = tpm_p, filename = "figures/tpm_realm.pdf", dpi = 300, height = 5, width = 10)
@@ -119,12 +123,13 @@ source("draw_blackfly_heatmap.R")
 
 # Raw counts
 grouped_order_df <- joined_df %>%
-  select(starts_with("BlackFly"), Realm,  Kingdom, Phylum, Class, Order, Family) %>%
-  group_by(Realm,  Kingdom, Phylum, Class, Order, Family) %>%
-  summarize(across(all_of(starts_with("BlackFly")), ~sum(.)),
-            n=n()) %>%
+  select(starts_with("BlackFly"), Realm, Kingdom, Phylum, Class, Order, Family) %>%
+  group_by(Realm, Kingdom, Phylum, Class, Order, Family) %>%
+  summarize(across(all_of(starts_with("BlackFly")), ~ sum(.)),
+    n = n()
+  ) %>%
   ungroup() %>%
-  mutate(across(!starts_with("BlackFly"), ~replace_na(., "unclassified")))
+  mutate(across(!starts_with("BlackFly"), ~ replace_na(., "unclassified")))
 
 draw_blackfly_heatmap(grouped_order_df)
 
@@ -138,10 +143,10 @@ tpm_order_df <- tpm_scaled %>%
   ungroup() %>%
   mutate(across(!starts_with("BlackFly"), ~ replace_na(., "unclassified")))
 
-draw_blackfly_heatmap(tpm_order_df, log2=F, title="Length normalized RA", legend_side = "bottom")
+draw_blackfly_heatmap(tpm_order_df, log2 = F, title = "Length normalized RA", legend_side = "bottom")
 
-pdf("figures/blackflies_heatmap_bottom_legend.pdf", width = 16.6, height = 17)
-draw_blackfly_heatmap(grouped_order_df, legend_side = "bottom")
+pdf("figures/blackflies_heatmap_left_legend.pdf", width = 16.6, height = 10)
+draw_blackfly_heatmap(grouped_order_df, legend_side = "left")
 dev.off()
 
 tiff("figures/tiff/figure3.tiff", width = 16.6, height = 17, units = "in", res = 300)
