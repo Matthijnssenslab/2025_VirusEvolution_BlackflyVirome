@@ -92,7 +92,18 @@ vmr <- readxl::read_excel("data/VMR_MSL39_v1.xlsx")
 #  left_join(ictv_matches_long, by=join_by("Nucleotide" == "Accession"), suffix = c(".NCBI", ".ICTV"))
 
 # ICTV metadata
-ictv_meta <- do.call(rbind, lapply(list.files(path = here::here("data/ictv_trees/"), pattern = "*.csv", full.names = T), read.csv))
+ictv_meta <- do.call(rbind, lapply(
+  list.files(
+    path = here::here("data/ictv_trees/"),
+    pattern = "\\.csv$",
+    full.names = TRUE
+  )[!grepl("_host\\.csv$", list.files(
+    path = here::here("data/ictv_trees/"),
+    pattern = "\\.csv$",
+    full.names = FALSE
+  ))],
+  read.csv
+))
 
 ictv_meta <- ictv_meta |>
   left_join(
@@ -103,8 +114,20 @@ ictv_meta <- ictv_meta |>
     suffix = c(".NCBI", ".ICTV")
   )
 
-ictv_meta <- ictv_meta |>
-  mutate(`Host source` = gsub(" \\(S\\)", "", `Host source`))
+
+# Read the two Host source files
+host_durna <- read_csv(here::here("data/ictv_trees/blast_durnavirales_host.csv"))
+host_ghabri <- read_csv(here::here("data/ictv_trees/blast_ghabrivirales_host.csv"))
+
+# Combine the host source data
+host_data <- bind_rows(host_durna, host_ghabri)
+
+# Merge host data with ictv_meta, filling missing "Host source"
+ictv_meta <- ictv_meta %>%
+  left_join(host_data, by = "Accession", suffix = c("", "_new")) %>%
+  mutate(`Host source` = ifelse(is.na(`Host source`), `Host source_new`, `Host source`)) %>%
+  select(-`Host source_new`, -Host_new) %>% # Remove the extra column
+  mutate(`Host source` = gsub(" \\(S\\)", "", `Host source`)) # Clean up
 
 # Set colors for Host
 # cols <- viridis::viridis(length(unique(all_meta$Broad_category))-1)
@@ -333,7 +356,7 @@ get_mrca(tree = tree, meta = combined_tree, group = "Genus.ICTV")
 
 clade <- clade |>
   filter(id != "Partitiviridae") |>
-  bind_rows(data.frame(node = c(235, 354, 332, 380), id = c("Gammapartitivirus", "Alphapartitivirus", "Betapartitivirus", "Deltapartitivirus")))
+  bind_rows(data.frame(node = c(286, 336, 312, 358), id = c("Gammapartitivirus", "Alphapartitivirus", "Betapartitivirus", "Deltapartitivirus")))
 
 durna_tree <- tree
 detailed_tree(durna_tree, clade, "Durnavirales")
