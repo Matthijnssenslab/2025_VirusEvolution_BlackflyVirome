@@ -101,7 +101,7 @@ draw_blackfly_heatmap <- function(grouped_order_df, log2 = T, title = "Log2 Read
     #  col = order_col, pch = hm_anno_df$OrderNumber,
     #  pt_size = unit(2, "mm"), pt_gp = gpar(col = "black")
     # ),
-    show_annotation_name = T,
+    show_annotation_name = F,
     annotation_name_side = "top",
     annotation_name_gp = gpar(fontsize = 10, fontface = "bold"),
     annotation_name_rot = 45,
@@ -153,7 +153,8 @@ draw_blackfly_heatmap <- function(grouped_order_df, log2 = T, title = "Log2 Read
 
   lgd_king <- ComplexHeatmap::Legend(
     labels = gt_render(ifelse(names(king_col) != "unclassified", glue::glue("<i>{names(king_col)}</i>"), "unclassified")),
-    title = "Kingdom", legend_gp = gpar(fill = king_col)
+    title = "Kingdom",
+    legend_gp = gpar(fill = king_col)
   )
   # lgd_phylum <- ComplexHeatmap::Legend(
   #  labels = gt_render(ifelse(names(phyla_col) != "unclassified", glue::glue("<i>{names(phyla_col)}</i>"), "unclassified")),
